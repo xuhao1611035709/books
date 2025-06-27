@@ -70,7 +70,7 @@ export const useLogin = (onSuccess?: () => void) => {
   const router = useRouter()
   
   return useMutation(
-    loginMutationOptions(queryClient, (data) => {
+    loginMutationOptions(queryClient, () => {
       router.push('/dashboard')
       router.refresh()
       if (onSuccess) onSuccess()
@@ -83,7 +83,7 @@ export const useRegister = (onSuccess?: () => void) => {
   const router = useRouter()
   
   return useMutation(
-    registerMutationOptions(queryClient, (data) => {
+    registerMutationOptions(queryClient, () => {
       router.push('/login')
       if (onSuccess) onSuccess()
     })

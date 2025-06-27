@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 
     // 过滤掉 null 值
     const filteredParams = Object.fromEntries(
-      Object.entries(queryParams).filter(([_, value]) => value !== null)
+      Object.entries(queryParams).filter(([, value]) => value !== null)
     )
 
     const validatedParams = booksQuerySchema.parse(filteredParams)
