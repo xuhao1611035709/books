@@ -1,0 +1,166 @@
+name: Multi-Branch CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, dev, release]
+  pull_request:
+    branches: [main, dev, release]
+
+# 环境变量
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # 代码质量检查 (所有分支都运行)
+  quality-check:
+    name: Quality Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run type-check
+        continue-on-error: false
+
+      - name: Lint check
+        run: npm run lint
+        continue-on-error: false
+
+      - name: Build check
+        run: npm run build
+        env:
+          SKIP_ENV_VALIDATION: true
+
+  # 部署到不同环境
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: quality-check
+    if: github.event_name == 'push'
+    strategy:
+      matrix:
+        include:
+          - branch: main
+            environment: production
+            url_suffix: ''
+          - branch: release
+            environment: staging
+            url_suffix: '-staging'
+          - branch: dev
+            environment: development
+            url_suffix: '-dev'
+    
+    # 只在对应分支推送时运行
+    if: github.ref == format('refs/heads/{0}', matrix.branch)
+    
+    environment:
+      name: ${{ matrix.environment }}
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          # 根据环境设置不同的环境变量
+          NEXT_PUBLIC_ENV: ${{ matrix.environment }}
+          NEXT_PUBLIC_API_URL: ${{ secrets[format('API_URL_{0}', matrix.environment)] }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets[format('SUPABASE_URL_{0}', matrix.environment)] }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets[format('SUPABASE_ANON_KEY_{0}', matrix.environment)] }}
+
+      # Vercel 部署 (推荐用于 Next.js)
+      - name: Deploy to Vercel
+        id: deploy
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          # 根据分支设置不同的部署配置
+          vercel-args: >-
+            ${{ matrix.branch == 'main' && '--prod' || 
+                format('--target preview --meta branch={0}', matrix.branch) }}
+
+      # 或者使用 Netlify 部署
+      # - name: Deploy to Netlify
+      #   id: deploy
+      #   uses: nwtgck/actions-netlify@v2.0
+      #   with:
+      #     publish-dir: './.next'
+      #     production-branch: ${{ matrix.branch == 'main' }}
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     deploy-message: "Deploy from GitHub Actions"
+      #     enable-pull-request-comment: true
+      #     enable-commit-comment: true
+      #   env:
+      #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      #     NETLIFY_SITE_ID: ${{ secrets[format('NETLIFY_SITE_ID_{0}', matrix.environment)] }}
+
+      - name: Comment deployment info
+        if: github.event_name == 'push'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const environment = '${{ matrix.environment }}';
+            const deployUrl = '${{ steps.deploy.outputs.preview-url || steps.deploy.outputs.url }}';
+            const branch = '${{ matrix.branch }}';
+            
+            // 创建部署状态评论
+            const comment = `
+            ## 🚀 部署成功！
+            
+            **分支:** \`${branch}\`
+            **环境:** \`${environment}\`
+            **部署地址:** ${deployUrl}
+            
+            ### 环境说明:
+            ${environment === 'production' ? '🌟 **生产环境** - 用户正式使用的版本' : ''}
+            ${environment === 'staging' ? '🧪 **预发布环境** - 发布前的最终测试版本' : ''}
+            ${environment === 'development' ? '🔧 **开发环境** - 开发和测试使用的版本' : ''}
+            `;
+            
+            // 如果有相关的 issue 或 PR，可以在这里添加更多信息
+            console.log(comment);
+
+  # 通知部署结果
+  notify:
+    name: Notify Deployment Result
+    runs-on: ubuntu-latest
+    needs: [quality-check, deploy]
+    if: always() && github.event_name == 'push'
+    steps:
+      - name: Notify Success
+        if: needs.deploy.result == 'success'
+        run: |
+          echo "✅ 部署成功完成！"
+          echo "分支: ${{ github.ref_name }}"
+          echo "环境: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'release' && 'staging' || 'development' }}"
+
+      - name: Notify Failure
+        if: needs.deploy.result == 'failure' || needs.quality-check.result == 'failure'
+        run: |
+          echo "❌ 部署失败！"
+          echo "分支: ${{ github.ref_name }}"
+          echo "请检查构建日志以获取详细信息。" 
