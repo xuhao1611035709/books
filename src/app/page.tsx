@@ -16,8 +16,14 @@ export default function Home() {
           <li className="mb-2 tracking-[-.01em]">
             📚 图书管理系统已成功部署到Vercel！
           </li>
-          <li className="tracking-[-.01em]">
+          <li className="mb-2 tracking-[-.01em]">
             CI/CD自动部署功能正常工作 ✅
+          </li>
+          <li className="mb-2 tracking-[-.01em] text-blue-600 font-semibold">
+            🚀 Release 分支 CI/CD 测试 - {new Date().toLocaleString('zh-CN')}
+          </li>
+          <li className="tracking-[-.01em] text-green-600">
+            ✨ 这是一个测试更新，验证自动部署是否工作！
           </li>
         </ol>
 
