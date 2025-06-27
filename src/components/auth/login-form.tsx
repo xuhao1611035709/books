@@ -46,9 +46,20 @@ export default function LoginForm() {
     setError(null)
 
     try {
+      // 本地测试：确保邮箱格式和密码长度符合 Supabase 要求
+      let email = data.email
+      let password = data.password
+      
+      if (!email.includes('@')) {
+        email = `${email}@test.local`
+      }
+      if (password.length < 6) {
+        password = password.padEnd(6, '0')
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
+        email,
+        password,
       })
 
       if (error) {
