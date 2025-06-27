@@ -12,7 +12,8 @@ export async function POST(request: NextRequest) {
 
     // 验证请求数据
     const validatedData = registerRequestSchema.parse(body)
-    let { email, password, fullName } = validatedData
+    let { email, password } = validatedData
+    const { fullName } = validatedData
     
     // 本地测试：确保邮箱格式和密码长度符合 Supabase 要求
     if (!email.includes('@')) {
