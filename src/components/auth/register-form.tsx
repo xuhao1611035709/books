@@ -17,8 +17,7 @@ import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react'
 const registerSchema = z.object({
   email: z
     .string()
-    .min(1, '请输入邮箱')
-    .email('请输入有效的邮箱地址'),
+    .min(1, '请输入邮箱'),
   password: z
     .string()
     .min(1, '请输入密码'),
@@ -135,14 +134,14 @@ export default function RegisterForm() {
         {/* 邮箱输入 */}
         <div className="space-y-2">
           <Label htmlFor="email">
-            邮箱 <span className="text-red-500">*</span>
+            用户名 <span className="text-red-500">*</span>
           </Label>
           <div className="relative">
             <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
               id="email"
-              type="email"
-              placeholder="请输入您的邮箱"
+              type="text"
+              placeholder="请输入用户名或邮箱"
               className="pl-10"
               {...register('email')}
               disabled={isLoading}

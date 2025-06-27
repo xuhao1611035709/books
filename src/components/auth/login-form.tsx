@@ -18,12 +18,10 @@ import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react'
 const loginSchema = z.object({
   email: z
     .string()
-    .min(1, '请输入邮箱')
-    .email('请输入有效的邮箱地址'),
+    .min(1, '请输入邮箱'),
   password: z
     .string()
-    .min(6, '密码至少需要6个字符')
-    .max(100, '密码过长'),
+    .min(1, '请输入密码'),
 })
 
 type LoginFormData = z.infer<typeof loginSchema>
@@ -106,13 +104,13 @@ export default function LoginForm() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* 邮箱输入 */}
         <div className="space-y-2">
-          <Label htmlFor="email">邮箱</Label>
+          <Label htmlFor="email">用户名</Label>
           <div className="relative">
             <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
               id="email"
-              type="email"
-              placeholder="请输入您的邮箱"
+              type="text"
+              placeholder="请输入用户名或邮箱"
               className="pl-10"
               {...register('email')}
               disabled={isLoading}

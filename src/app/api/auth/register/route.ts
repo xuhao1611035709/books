@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
       email,
       password,
       options: {
+        emailRedirectTo: undefined, // 禁用邮箱验证重定向
         data: {
           full_name: fullName || '',
         },
@@ -42,9 +43,7 @@ export async function POST(request: NextRequest) {
 
     const response = {
       user: data.user,
-      message: data.user.email_confirmed_at 
-        ? '注册成功！您已可以登录系统。'
-        : '注册成功！请检查您的邮箱并点击验证链接完成注册。'
+      message: '注册成功！您现在可以使用这个账户登录系统。'
     }
 
     // 验证响应数据
