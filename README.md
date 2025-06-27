@@ -34,3 +34,15 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+---
+
+## 🚀 多分支部署
+
+本项目支持多分支自动部署：
+
+- **main** - 生产环境 (Production)
+- **release** - 预发布环境 (Staging) 
+- **dev** - 开发环境 (Development)
+
+> **CI/CD 测试标记** - Release 分支测试: 2024-01-01 12:00:00
