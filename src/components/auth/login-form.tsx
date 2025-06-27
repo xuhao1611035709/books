@@ -89,9 +89,18 @@ export default function LoginForm() {
   return (
     <div className="space-y-6">
       {error && (
-        <Alert variant="destructive">
-          {error}
-        </Alert>
+        <div className="bg-red-50 border border-red-200 rounded-md p-4">
+          <div className="flex">
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">
+                登录失败
+              </h3>
+              <div className="mt-2 text-sm text-red-700">
+                <p>{error}</p>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
