@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server'
-import { currentEnv, currentConfig } from '@/lib/env-config'
+import { getCurrentEnv, getCurrentConfig } from '@/lib/env-config'
 
 export async function GET() {
   try {
+    const currentEnv = getCurrentEnv()
+    const currentConfig = getCurrentConfig()
+    
     return NextResponse.json({
       status: 'ok',
       environment: currentEnv,
@@ -20,7 +23,7 @@ export async function GET() {
       { 
         status: 'error', 
         message: error instanceof Error ? error.message : 'Unknown error',
-        environment: currentEnv,
+        environment: getCurrentEnv(),
       },
       { status: 500 }
     )
