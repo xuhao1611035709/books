@@ -1,0 +1,63 @@
+# 📋 Vercel 环境变量配置 (一个项目三环境)
+# 复制此内容到 Vercel 项目设置 → Environment Variables
+
+# ========================================
+# 🟢 PRODUCTION 环境变量 (main 分支专用)
+# ========================================
+# Environment: Production
+# Apply to: Production (main branch only)
+
+NEXT_PUBLIC_ENV=production
+NEXT_PUBLIC_SUPABASE_URL=https://你的生产项目.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=你的生产环境anon_key
+SUPABASE_SERVICE_ROLE_KEY=你的生产环境service_role_key
+NEXT_PUBLIC_API_URL=/api
+NEXT_PUBLIC_SITE_URL=https://your-app.vercel.app
+
+# ========================================
+# 🟡 PREVIEW 环境变量 (所有分支)
+# ========================================
+# Environment: Preview
+# Apply to: Preview (dev & release branches)
+
+# 开发环境配置 (dev 分支使用)
+NEXT_PUBLIC_SUPABASE_URL_DEV=https://你的开发项目.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY_DEV=你的开发环境anon_key
+SUPABASE_SERVICE_ROLE_KEY_DEV=你的开发环境service_role_key
+
+# 预发布环境配置 (release 分支使用)
+NEXT_PUBLIC_SUPABASE_URL_RELEASE=https://你的预发布项目.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY_RELEASE=你的预发布环境anon_key
+SUPABASE_SERVICE_ROLE_KEY_RELEASE=你的预发布环境service_role_key
+
+# 通用预览配置
+NEXT_PUBLIC_API_URL=/api
+
+# ========================================
+# 📝 配置说明
+# ========================================
+
+# 1. 在 Vercel 项目设置中：
+#    Settings → Environment Variables → Add New
+
+# 2. 生产环境变量：
+#    - Environment: Production
+#    - 只应用于 main 分支的部署
+
+# 3. 预览环境变量：
+#    - Environment: Preview  
+#    - 应用于所有非 main 分支 (dev, release)
+
+# 4. 获取 Supabase 配置：
+#    Project Settings → API → Project URL & API Keys
+
+# ========================================
+# 🔄 自动环境检测逻辑
+# ========================================
+
+# Vercel 会根据部署的分支自动选择配置：
+# - main 分支     → Production 环境变量
+# - release 分支  → Preview 环境变量 (使用 _RELEASE 后缀)
+# - dev 分支      → Preview 环境变量 (使用 _DEV 后缀)
+
+# env-config.ts 会根据 VERCEL_GIT_COMMIT_REF 自动选择正确的配置 

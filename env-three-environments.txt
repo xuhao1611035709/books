@@ -1,0 +1,59 @@
+# ===================================================================
+# 三环境配置文件模板 (dev/release/main)
+# ===================================================================
+# 复制以下内容到 .env.local 文件中，然后填入您的实际配置
+
+# ===================================================================
+# DEV 环境配置 (开发环境)
+# ===================================================================
+NEXT_PUBLIC_ENV_DEV=development
+NEXT_PUBLIC_SITE_URL_DEV=http://localhost:3000
+NEXT_PUBLIC_SUPABASE_URL_DEV=https://your-dev-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY_DEV=your_dev_anon_key
+SUPABASE_SERVICE_ROLE_KEY_DEV=your_dev_service_role_key
+
+# ===================================================================
+# RELEASE 环境配置 (预发布环境)
+# ===================================================================
+NEXT_PUBLIC_ENV_RELEASE=staging
+NEXT_PUBLIC_SITE_URL_RELEASE=https://your-app-release.vercel.app
+NEXT_PUBLIC_SUPABASE_URL_RELEASE=https://your-release-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY_RELEASE=your_release_anon_key
+SUPABASE_SERVICE_ROLE_KEY_RELEASE=your_release_service_role_key
+
+# ===================================================================
+# MAIN 环境配置 (生产环境)
+# ===================================================================
+NEXT_PUBLIC_ENV_MAIN=production
+NEXT_PUBLIC_SITE_URL_MAIN=https://your-app.vercel.app
+NEXT_PUBLIC_SUPABASE_URL_MAIN=https://your-main-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY_MAIN=your_main_anon_key
+SUPABASE_SERVICE_ROLE_KEY_MAIN=your_main_service_role_key
+
+# ===================================================================
+# 当前激活的配置 (本地开发使用)
+# ===================================================================
+# 根据需要切换环境，复制对应环境的配置到下面
+
+# 基础配置
+NEXT_PUBLIC_API_URL=/api
+
+# 当前使用的环境配置 (默认 DEV，可手动切换)
+NEXT_PUBLIC_ENV=development
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SUPABASE_URL=https://your-dev-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_dev_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_dev_service_role_key
+
+# ===================================================================
+# 使用说明
+# ===================================================================
+# 1. 填入三个 Supabase 项目的实际配置值
+# 2. 本地开发时，修改 "当前使用的环境配置" 部分
+# 3. 要切换环境时，复制对应环境的值到底部的激活配置
+# 
+# 切换到 RELEASE 环境：
+# 复制 NEXT_PUBLIC_*_RELEASE 的值到对应的 NEXT_PUBLIC_* 变量
+#
+# 切换到 MAIN 环境：
+# 复制 NEXT_PUBLIC_*_MAIN 的值到对应的 NEXT_PUBLIC_* 变量 

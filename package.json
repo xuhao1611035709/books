@@ -11,7 +11,10 @@
     "type-check": "tsc --noEmit",
     "test": "echo \"No tests specified\" && exit 0",
     "clean": "rm -rf .next",
-    "analyze": "ANALYZE=true npm run build"
+    "analyze": "ANALYZE=true npm run build",
+    "env:dev": "node scripts/switch-env.js dev",
+    "env:release": "node scripts/switch-env.js release",
+    "env:main": "node scripts/switch-env.js main"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
