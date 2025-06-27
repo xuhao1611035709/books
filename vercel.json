@@ -6,14 +6,6 @@
       "dev": true
     }
   },
-  "alias": [
-    {
-      "domain": "books-kingwei.vercel.app",
-      "redirect": {
-        "branch": "main"
-      }
-    }
-  ],
   "github": {
     "enabled": true,
     "autoAlias": true
