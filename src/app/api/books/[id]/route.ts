@@ -1,9 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { 
+  updateBookSchema,
+  bookResponseSchema,
+  deleteBookResponseSchema
+} from './type'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const supabase = await createClient()
@@ -14,11 +19,13 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const resolvedParams = await params
+    const { id } = params
+
+    // 获取单本图书
     const { data: book, error } = await supabase
       .from('books')
       .select('*')
-      .eq('id', resolvedParams.id)
+      .eq('id', id)
       .single()
 
     if (error) {
@@ -29,7 +36,11 @@ export async function GET(
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    return NextResponse.json({ book })
+    const response = { book }
+    
+    // 验证响应数据
+    const validatedResponse = bookResponseSchema.parse(response)
+    return NextResponse.json(validatedResponse)
 
   } catch (error) {
     console.error('API error:', error)
@@ -42,7 +53,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const supabase = await createClient()
@@ -53,29 +64,17 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const resolvedParams = await params
+    const { id } = params
     const body = await request.json()
-    const { title, author, isbn, category, status } = body
 
-    // 验证必填字段
-    if (!title || !author || !category) {
-      return NextResponse.json(
-        { error: 'Title, author, and category are required' },
-        { status: 400 }
-      )
-    }
+    // 验证请求数据
+    const validatedData = updateBookSchema.parse(body)
 
     // 更新图书
     const { data: book, error } = await supabase
       .from('books')
-      .update({
-        title,
-        author,
-        isbn: isbn || null,
-        category,
-        status: status || 'available',
-      })
-      .eq('id', resolvedParams.id)
+      .update(validatedData)
+      .eq('id', id)
       .select()
       .single()
 
@@ -87,10 +86,23 @@ export async function PUT(
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    return NextResponse.json({ book })
+    const response = { book }
+    
+    // 验证响应数据
+    const validatedResponse = bookResponseSchema.parse(response)
+    return NextResponse.json(validatedResponse)
 
   } catch (error) {
     console.error('API error:', error)
+    
+    // 如果是Zod验证错误，返回更详细的错误信息
+    if (error instanceof Error && error.name === 'ZodError') {
+      return NextResponse.json(
+        { error: 'Invalid request data', details: error.message },
+        { status: 400 }
+      )
+    }
+    
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -100,7 +112,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const supabase = await createClient()
@@ -111,34 +123,42 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const resolvedParams = await params
+    const { id } = params
 
-    // 先检查图书是否存在
-    const { data: existingBook } = await supabase
+    // 先获取要删除的图书信息
+    const { data: bookToDelete, error: fetchError } = await supabase
       .from('books')
-      .select('id, title')
-      .eq('id', resolvedParams.id)
+      .select('*')
+      .eq('id', id)
       .single()
 
-    if (!existingBook) {
-      return NextResponse.json({ error: 'Book not found' }, { status: 404 })
+    if (fetchError) {
+      if (fetchError.code === 'PGRST116') {
+        return NextResponse.json({ error: 'Book not found' }, { status: 404 })
+      }
+      console.error('Database error:', fetchError)
+      return NextResponse.json({ error: fetchError.message }, { status: 500 })
     }
 
     // 删除图书
-    const { error } = await supabase
+    const { error: deleteError } = await supabase
       .from('books')
       .delete()
-      .eq('id', resolvedParams.id)
+      .eq('id', id)
 
-    if (error) {
-      console.error('Database error:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    if (deleteError) {
+      console.error('Database error:', deleteError)
+      return NextResponse.json({ error: deleteError.message }, { status: 500 })
     }
 
-    return NextResponse.json({ 
+    const response = {
       message: 'Book deleted successfully',
-      deletedBook: existingBook 
-    })
+      deletedBook: bookToDelete
+    }
+    
+    // 验证响应数据
+    const validatedResponse = deleteBookResponseSchema.parse(response)
+    return NextResponse.json(validatedResponse)
 
   } catch (error) {
     console.error('API error:', error)

@@ -1,0 +1,67 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "books": "Books Management",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "books": {
+    "title": "Books Management",
+    "addBook": "Add Book",
+    "editBook": "Edit Book",
+    "deleteBook": "Delete Book",
+    "bookDetails": "Book Details",
+    "noBooks": "No books found",
+    "fields": {
+      "title": "Title",
+      "author": "Author",
+      "isbn": "ISBN",
+      "category": "Category",
+      "status": "Status"
+    },
+    "status": {
+      "available": "Available",
+      "borrowed": "Borrowed",
+      "maintenance": "Maintenance"
+    },
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "messages": {
+      "addSuccess": "Book added successfully!",
+      "updateSuccess": "Book updated successfully!",
+      "deleteSuccess": "Book deleted successfully!",
+      "addError": "Failed to add book",
+      "updateError": "Failed to update book",
+      "deleteError": "Failed to delete book"
+    }
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "loginSuccess": "Login successful",
+    "registerSuccess": "Registration successful",
+    "loginError": "Login failed",
+    "registerError": "Registration failed"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error occurred",
+    "retry": "Retry",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "page": "Page",
+    "total": "Total",
+    "noData": "No data"
+  }
+} 

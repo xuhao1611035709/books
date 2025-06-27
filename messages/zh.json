@@ -1,0 +1,67 @@
+{
+  "nav": {
+    "dashboard": "仪表板",
+    "books": "图书管理",
+    "login": "登录",
+    "register": "注册",
+    "logout": "退出登录"
+  },
+  "books": {
+    "title": "图书管理",
+    "addBook": "添加图书",
+    "editBook": "编辑图书",
+    "deleteBook": "删除图书",
+    "bookDetails": "图书详情",
+    "noBooks": "暂无图书",
+    "fields": {
+      "title": "书名",
+      "author": "作者",
+      "isbn": "ISBN",
+      "category": "分类",
+      "status": "状态"
+    },
+    "status": {
+      "available": "可借阅",
+      "borrowed": "已借出",
+      "maintenance": "维护中"
+    },
+    "actions": {
+      "view": "查看",
+      "edit": "编辑",
+      "delete": "删除",
+      "save": "保存",
+      "cancel": "取消",
+      "confirm": "确认"
+    },
+    "messages": {
+      "addSuccess": "图书添加成功！",
+      "updateSuccess": "图书更新成功！",
+      "deleteSuccess": "图书删除成功！",
+      "addError": "添加失败",
+      "updateError": "更新失败",
+      "deleteError": "删除失败"
+    }
+  },
+  "auth": {
+    "login": "登录",
+    "register": "注册",
+    "email": "邮箱",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "loginSuccess": "登录成功",
+    "registerSuccess": "注册成功",
+    "loginError": "登录失败",
+    "registerError": "注册失败"
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "出错了",
+    "retry": "重试",
+    "search": "搜索",
+    "filter": "筛选",
+    "sort": "排序",
+    "page": "页码",
+    "total": "总计",
+    "noData": "暂无数据"
+  }
+} 

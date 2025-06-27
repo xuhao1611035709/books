@@ -1,8 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { 
-  registerRequestSchema,
-  registerResponseSchema
+  loginRequestSchema,
+  loginResponseSchema
 } from './type'
 
 export async function POST(request: NextRequest) {
@@ -11,46 +11,39 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
 
     // 验证请求数据
-    const validatedData = registerRequestSchema.parse(body)
-    const { email, password, fullName } = validatedData
+    const validatedData = loginRequestSchema.parse(body)
+    const { email, password } = validatedData
 
-    // 使用Supabase进行用户注册
-    const { data, error } = await supabase.auth.signUp({
+    // 使用Supabase进行身份验证
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
-      options: {
-        data: {
-          full_name: fullName || '',
-        },
-      },
     })
 
     if (error) {
-      console.error('Registration error:', error)
+      console.error('Authentication error:', error)
       return NextResponse.json(
         { error: error.message },
         { status: 400 }
       )
     }
 
-    if (!data.user) {
+    if (!data.user || !data.session) {
       return NextResponse.json(
-        { error: 'Registration failed' },
+        { error: 'Authentication failed' },
         { status: 400 }
       )
     }
 
     const response = {
       user: data.user,
-      message: data.user.email_confirmed_at 
-        ? '注册成功！您已可以登录系统。'
-        : '注册成功！请检查您的邮箱并点击验证链接完成注册。'
+      session: data.session
     }
 
     // 验证响应数据
-    const validatedResponse = registerResponseSchema.parse(response)
+    const validatedResponse = loginResponseSchema.parse(response)
     
-    return NextResponse.json(validatedResponse, { status: 201 })
+    return NextResponse.json(validatedResponse)
 
   } catch (error) {
     console.error('API error:', error)

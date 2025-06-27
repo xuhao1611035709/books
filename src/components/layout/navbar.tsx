@@ -15,6 +15,8 @@ import {
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { User, LogOut, Settings, Menu, BookOpen } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { LanguageSwitcher } from '@/components/language-switcher'
 
 interface NavbarProps {
   user: {
@@ -31,12 +33,13 @@ export default function Navbar({ user }: NavbarProps) {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+  const t = useTranslations('nav')
 
   const handleSignOut = async () => {
     setIsLoading(true)
     try {
       await supabase.auth.signOut()
-      toast.success('退出成功')
+      toast.success(t('logout'))
       router.push('/login')
       router.refresh()
     } catch {
@@ -61,7 +64,7 @@ export default function Navbar({ user }: NavbarProps) {
         <div className="flex items-center space-x-2">
           <BookOpen className="h-6 w-6 text-blue-600" />
           <span className="hidden font-bold sm:inline-block">
-            图书管理系统
+            {t('books')}
           </span>
         </div>
 
@@ -70,6 +73,9 @@ export default function Navbar({ user }: NavbarProps) {
           <div className="w-full flex-1 md:w-auto md:flex-none">
             {/* 这里可以放搜索框 */}
           </div>
+          
+          {/* 语言切换器 */}
+          <LanguageSwitcher />
           
           {/* 用户菜单 */}
           <DropdownMenu>
@@ -107,7 +113,7 @@ export default function Navbar({ user }: NavbarProps) {
                 className="text-red-600 focus:text-red-600"
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>{isLoading ? '退出中...' : '退出登录'}</span>
+                <span>{isLoading ? '退出中...' : t('logout')}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

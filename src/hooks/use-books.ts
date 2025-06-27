@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 
 // 类型定义
 export interface Book {
@@ -141,6 +142,7 @@ export const useBook = (id: string) => {
 
 export const useCreateBook = () => {
   const queryClient = useQueryClient()
+  const t = useTranslations('books')
   
   return useMutation({
     mutationFn: createBook,
@@ -148,12 +150,12 @@ export const useCreateBook = () => {
       // 使所有书籍查询无效，触发重新获取
       queryClient.invalidateQueries({ queryKey: ['books'] })
       
-      toast.success('图书添加成功！', {
-        description: `《${data.book.title}》已添加到图书库`
+      toast.success(t('messages.addSuccess'), {
+        description: `《${data.book.title}》${t('messages.addSuccess')}`
       })
     },
     onError: (error: Error) => {
-      toast.error('添加失败', {
+      toast.error(t('messages.addError'), {
         description: error.message
       })
     }
@@ -162,6 +164,7 @@ export const useCreateBook = () => {
 
 export const useUpdateBook = () => {
   const queryClient = useQueryClient()
+  const t = useTranslations('books')
   
   return useMutation({
     mutationFn: updateBook,
@@ -172,12 +175,12 @@ export const useUpdateBook = () => {
       // 使所有书籍查询无效
       queryClient.invalidateQueries({ queryKey: ['books'] })
       
-      toast.success('图书更新成功！', {
-        description: `《${data.book.title}》信息已更新`
+      toast.success(t('messages.updateSuccess'), {
+        description: `《${data.book.title}》${t('messages.updateSuccess')}`
       })
     },
     onError: (error: Error) => {
-      toast.error('更新失败', {
+      toast.error(t('messages.updateError'), {
         description: error.message
       })
     }
@@ -186,6 +189,7 @@ export const useUpdateBook = () => {
 
 export const useDeleteBook = () => {
   const queryClient = useQueryClient()
+  const t = useTranslations('books')
   
   return useMutation({
     mutationFn: deleteBook,
@@ -196,12 +200,12 @@ export const useDeleteBook = () => {
       // 移除特定书籍的缓存
       queryClient.removeQueries({ queryKey: ['book', data.deletedBook.id] })
       
-      toast.success('图书删除成功！', {
-        description: `《${data.deletedBook.title}》已从图书库中移除`
+      toast.success(t('messages.deleteSuccess'), {
+        description: `《${data.deletedBook.title}》${t('messages.deleteSuccess')}`
       })
     },
     onError: (error: Error) => {
-      toast.error('删除失败', {
+      toast.error(t('messages.deleteError'), {
         description: error.message
       })
     }
