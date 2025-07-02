@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # 开发环境 (dev分支)
+  books-dev:
+    build: .
+    container_name: books-dev
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_ENV=development
+      - NEXT_PUBLIC_SITE_URL=http://dev.books.local
+      - NEXT_PUBLIC_API_URL=/api
+      - NEXT_PUBLIC_SUPABASE_URL=${SUPABASE_URL_DEV}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${SUPABASE_KEY_DEV}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_KEY_DEV}
+    restart: unless-stopped
+    networks:
+      - books-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 预发布环境 (release分支)
+  books-release:
+    build: .
+    container_name: books-release
+    ports:
+      - "3002:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_ENV=staging
+      - NEXT_PUBLIC_SITE_URL=http://release.books.local
+      - NEXT_PUBLIC_API_URL=/api
+      - NEXT_PUBLIC_SUPABASE_URL=${SUPABASE_URL_RELEASE}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${SUPABASE_KEY_RELEASE}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_KEY_RELEASE}
+    restart: unless-stopped
+    networks:
+      - books-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 生产环境 (main分支)
+  books-main:
+    build: .
+    container_name: books-main
+    ports:
+      - "3003:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_ENV=production
+      - NEXT_PUBLIC_SITE_URL=http://books.local
+      - NEXT_PUBLIC_API_URL=/api
+      - NEXT_PUBLIC_SUPABASE_URL=${SUPABASE_URL_MAIN}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${SUPABASE_KEY_MAIN}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_KEY_MAIN}
+    restart: unless-stopped
+    networks:
+      - books-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx 反向代理
+  nginx:
+    image: nginx:alpine
+    container_name: books-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      books-dev:
+        condition: service_healthy
+      books-release:
+        condition: service_healthy
+      books-main:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - books-network
+
+networks:
+  books-network:
+    driver: bridge 

@@ -1,0 +1,17 @@
+{
+  "name": "books-release",
+  "service": {
+    "type": "nodejs",
+    "buildCommand": "npm run build",
+    "startCommand": "npm start",
+    "installCommand": "npm ci",
+    "rootDirectory": ".",
+    "outputDirectory": ".next"
+  },
+  "environment": {
+    "NODE_ENV": "production",
+    "NEXT_TELEMETRY_DISABLED": "1"
+  },
+  "regions": ["hkg"],
+  "plan": "hobby"
+} 
